@@ -1,10 +1,173 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Archive</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <script type="module" src="src/js/ui/view manager.js"></script>
 </head>
+
 <body>
-$END$
+    <nav class="navbar navbar-light navbar-expand-md shadow-lg" style="background-color: #ededed;">
+        <div class="container-fluid"><a class="navbar-brand">Archive</a><button class="navbar-toggler" data-toggle="collapse" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse"
+                id="navcol-1">
+                <ul class="nav navbar-nav ml-auto">
+                    <li style="cursor: default;" class="nav-item d-xl-flex" role="presentation"><a class="nav-link" id="navLink1">Back</a></li>
+                    <li style="cursor: default;" class="nav-item d-xl-flex" role="presentation"><a class="nav-link" id="navLink2">Settings</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div id="mainView">
+        <div class="container" style="padding-top: 4rem;">
+            <div class="shadow-lg" style="margin-bottom: 2rem;padding: 12px 20px;background-color: rgba(0,0,0,0.03);border: 1px solid rgba(0,0,0,.125);border-radius: 0.25rem;"><button class="btn btn-primary" type="button" id="toolLink1">Import &nbsp;<i class="fas fa-upload"></i></button><button class="btn btn-primary" type="button" style="margin-left: 1rem;" id="toolLink2">Add Folder &nbsp;<i class="fas fa-folder"></i></button></div>
+            <div class="card shadow-lg">
+                <div class="card-header">
+                    <h5 class="mb-0">C:\www</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Size</th>
+                                    <th>Option</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>..</td>
+                                    <td>Navigation</td>
+                                    <td>0bytes</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td><a href="#">www</a></td>
+                                    <td>Folder</td>
+                                    <td>0bytes</td>
+                                    <td><button class="btn btn-primary btn-sm" type="button">Delete &nbsp;<i class="far fa-trash-alt"></i>&nbsp;</button></td>
+                                </tr>
+                                <tr>
+                                    <td>hello.txt</td>
+                                    <td>text/plaint</td>
+                                    <td>20bytes</td>
+                                    <td><button class="btn btn-primary btn-sm" type="button">Delete &nbsp;<i class="far fa-trash-alt"></i>&nbsp;</button><button class="btn btn-primary btn-sm" type="button" style="margin-left: 1rem;">Export &nbsp;<i class="fas fa-download"></i>&nbsp;</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="addFileView">
+        <div class="container" style="padding-top: 4rem;">
+            <div class="card shadow-lg">
+                <div class="card-header">
+                    <h5 class="mb-0">Add File</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col" style="padding-top: 20px;padding-bottom: 20px;"><button class="btn btn-primary" type="button">Select File</button></div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <tbody>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Cell 4</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Path</td>
+                                            <td>Cell 2</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Size</td>
+                                            <td>Cell 4</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Type</td>
+                                            <td>Cell 4</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col" style="padding-top: 20px;padding-bottom: 20px;"><button class="btn btn-primary" type="button">Add</button></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="addFolderView">
+        <div class="container" style="padding-top: 4rem;">
+            <div class="card shadow-lg">
+                <div class="card-header">
+                    <h5 class="mb-0">Add Folder</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <form>
+                                <div class="form-row">
+                                    <div class="col"><input class="form-control" type="text" name="name" required="" placeholder="Folder name" autocomplete="off" style="max-width: 350px;"></div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="col"><button class="btn btn-primary" type="submit" style="margin-top: 1rem;">Create</button></div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="settingsView">
+        <div class="container" style="padding-top: 4rem;">
+            <div class="card shadow-lg">
+                <div class="card-header">
+                    <h5 class="mb-0">Settings</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <div class="table-responsive" style="margin-top: 3rem;">
+                                <table class="table table-hover">
+                                    <tbody>
+                                        <tr>
+                                            <td>App Version</td>
+                                            <td>1.4.5</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Publisher</td>
+                                            <td>HexaStudio</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Programmed by</td>
+                                            <td>Christoph Koschel</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
 </body>
+
 </html>
