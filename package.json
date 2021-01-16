@@ -2,10 +2,11 @@
   "name": "archiv",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/ts/main/index.js",
   "scripts": {
-    "start": "tsc . && electron .",
-    "build": "tsc . && electron-builder build --win --publish never",
+    "start": "tsc && electron .",
+    "build": "tsc && electron-builder build --win --publish never",
+    "pack": "tsc",
     "git-commit": "git commit -m \"Archive\"",
     "git-remote": "git remote add origin https://github.com/Christoph-Koschel/Archive.git",
     "git-push": "git push -u origin master"
