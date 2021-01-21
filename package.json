@@ -2,7 +2,7 @@
   "name": "archiv",
   "version": "1.0.0",
   "description": "",
-  "main": "src/ts/main/index.js",
+  "main": "src/ts/archive/index.js",
   "scripts": {
     "start": "tsc && electron .",
     "build": "tsc && electron-builder build --win --publish never",

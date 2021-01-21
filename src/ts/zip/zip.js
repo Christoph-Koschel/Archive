@@ -14,7 +14,7 @@ var ZipLib;
             child_process_1.execSync("\"" + __dirname + ("\\Zip.exe\" --unzip " + target + " " + destination));
         };
         Zip.prototype.Pack = function (target, destination, name) {
-            console.log(child_process_1.execSync("\"" + __dirname + ("\\Zip.exe\" --zip " + target + " " + destination + " " + name)));
+            child_process_1.execSync("\"" + __dirname + ("\\Zip.exe\" --zip " + target + " " + destination + " " + name));
         };
         return Zip;
     }());

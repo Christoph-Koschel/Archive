@@ -2,23 +2,22 @@ import {execSync} from "child_process";
 
 export namespace ZipLib {
     export class Zip {
+        private file: string;
 
-
-
-        public static open(): Zip {
-            return new Zip();
+        public static open(path: string): Zip {
+            return new Zip(path);
         }
 
-        private constructor() {
-
+        private constructor(path: string) {
+            this.file = path;
         }
 
-        public Extract(target: string, destination: string): void {
-            execSync(`\"` + __dirname + `\\Zip.exe\" --unzip ${target} ${destination}`);
+        public Extract(destination: string): void {
+            execSync(`\"` + __dirname + `\\Zip.exe\" --unzip ${this.file} ${destination}`);
         }
 
-        public Pack(target: string, destination: string, name: string): void {
-            execSync(`\"` + __dirname + `\\Zip.exe\" --zip ${target} ${destination} ${name}`);
+        public Pack(target: string): void {
+            execSync(`\"` + __dirname + `\\Zip.exe\" --zip ${target} ${this.file}`);
         }
     }
 }
