@@ -6,6 +6,7 @@ var electron_1 = require("electron");
 var path_1 = require("path");
 var extendedFs_1 = require("../extendedFs/extendedFs");
 var fs_1 = require("fs");
+var mime = require("mime");
 var __root = path_1.join(__dirname, "..", "..", "..");
 var Program;
 (function (Program) {
@@ -47,8 +48,8 @@ var Program;
                         menu: false
                     }
                 });
-                ui.window.loadFile(__root + "\\index.html").then(function () {
-                });
+                var archiveBridge = new ArchiveBridge();
+                ui.window.loadFile(__root + "\\index.html");
             });
         };
         return Archive;
@@ -77,6 +78,46 @@ var Program;
             fs_1.writeFileSync(__root + "/res/stat/stat.json", JSON.stringify(obj, null, 4));
         };
         return Stat;
+    }());
+    var ArchiveBridge = /** @class */ (function () {
+        function ArchiveBridge() {
+            var _this = this;
+            this.path = "\\";
+            electron_1.ipcMain.on("scanDir", function (event) {
+                event.returnValue = {
+                    returnValue: {
+                        entries: _this.scanDir(),
+                        path: _this.path
+                    }
+                };
+            });
+        }
+        ArchiveBridge.prototype.scanDir = function () {
+            var path = this.path;
+            path = __root + "\\res\\cash\\archive" + path;
+            var entries = fs_1.readdirSync(path);
+            var scan = [];
+            for (var x in entries) {
+                var entry = entries[x];
+                var stat = fs_1.statSync(path + entry);
+                if (stat.isDirectory()) {
+                    scan.push({
+                        type: "dir",
+                        name: entry
+                    });
+                }
+                else {
+                    scan.push({
+                        type: "file",
+                        name: entry,
+                        mime: mime.getType(entry),
+                        size: stat.size
+                    });
+                }
+            }
+            return scan;
+        };
+        return ArchiveBridge;
     }());
     electron_1.app.on("ready", function () {
         electron_1.app.on("before-quit", function () {

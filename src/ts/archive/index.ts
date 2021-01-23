@@ -1,11 +1,12 @@
 import {ZipLib} from "../zip/zip";
 import {Ui} from "./ui";
-import {app} from "electron";
+import {app, ipcMain} from "electron";
 import {join} from "path";
 import {Interfaces} from "./interfaces";
 import {ExtendedFs} from "../extendedFs/extendedFs";
-import {readFileSync, unlinkSync, writeFileSync} from "fs";
+import {readdirSync, readFileSync, Stats, statSync, unlinkSync, writeFileSync} from "fs";
 
+let mime = require("mime");
 const __root: string = join(__dirname, "..", "..", "..");
 
 namespace Program {
@@ -35,7 +36,7 @@ namespace Program {
                     stat.setStat(archiveStat);
                 }
             }
-            app.on("ready",() => {
+            app.on("ready", () => {
                 let ui: UiEngine = new UiEngine({
                     electron: {
                         icon: __root + "\\res\\icon\\icon.ico",
@@ -48,6 +49,7 @@ namespace Program {
                         menu: false
                     }
                 });
+                let archiveBridge = new ArchiveBridge();
                 ui.window.loadFile(__root + "\\index.html");
             });
         }
@@ -74,7 +76,52 @@ namespace Program {
         }
     }
 
-    app.on("ready",() => {
+    class ArchiveBridge {
+        private path: string;
+
+        constructor() {
+            this.path = "\\";
+
+            ipcMain.on("scanDir", (event) => {
+                event.returnValue = {
+                    returnValue: {
+                        entries: this.scanDir(),
+                        path: this.path
+                    }
+                };
+            });
+        }
+
+        private scanDir(): object[] {
+            let path: string = this.path;
+            path = __root + "\\res\\cash\\archive" + path;
+            let entries: object = readdirSync(path);
+            let scan: object[] = [];
+
+            for(const x in entries) {
+                let entry = entries[x];
+                let stat: Stats = statSync(path + entry);
+                if (stat.isDirectory()) {
+                    scan.push({
+                        type: "dir",
+                        name: entry
+                    });
+                } else {
+                    scan.push({
+                        type: "file",
+                        name: entry,
+                        mime: mime.getType(entry),
+                        size: stat.size
+                    });
+                }
+            }
+
+            return scan;
+        }
+    }
+
+
+    app.on("ready", () => {
         app.on("before-quit", () => {
             let stat: Stat = new Stat();
             let statFile: IStat | boolean = stat.getStat();

@@ -1,4 +1,14 @@
 window.addEventListener("load", () => {
+    window.addEventListener("keyup",(e) => {
+        if (e.keyCode === 27) {
+            document.getElementById("navLink1").style.display = "none";
+            document.getElementById("navLink2").style.display = "";
+            clearView({
+                mainView: true
+            });
+        }
+    });
+
     document.getElementById("navLink1").addEventListener("click", () => {
         document.getElementById("navLink1").style.display = "none";
         document.getElementById("navLink2").style.display = "";
