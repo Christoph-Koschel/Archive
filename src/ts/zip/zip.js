@@ -5,16 +5,19 @@ var child_process_1 = require("child_process");
 var ZipLib;
 (function (ZipLib) {
     var Zip = /** @class */ (function () {
-        function Zip() {
+        function Zip(path) {
+            this.file = path;
         }
-        Zip.open = function () {
-            return new Zip();
+        Zip.open = function (path) {
+            return new Zip(path);
         };
-        Zip.prototype.Extract = function (target, destination) {
-            child_process_1.execSync("\"" + __dirname + ("\\Zip.exe\" --unzip " + target + " " + destination));
+        Zip.prototype.Extract = function (destination) {
+            var log = child_process_1.execSync("\"" + __dirname + ("\\Zip.exe\" --unzip " + this.file + " " + destination));
+            console.log(log);
         };
-        Zip.prototype.Pack = function (target, destination, name) {
-            child_process_1.execSync("\"" + __dirname + ("\\Zip.exe\" --zip " + target + " " + destination + " " + name));
+        Zip.prototype.Pack = function (target) {
+            var log = child_process_1.execSync("\"" + __dirname + ("\\Zip.exe\" --zip " + target + " " + this.file));
+            console.log(log);
         };
         return Zip;
     }());

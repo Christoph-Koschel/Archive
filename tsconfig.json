@@ -9,7 +9,8 @@
     "outDir": "src/ts",
     "rootDir": "src/ts",
     "lib": [
-      "ES2015"
+      "ES2015",
+      "dom"
     ],
     "types": [
       "node"

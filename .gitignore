@@ -1,4 +1,6 @@
 node_modules
 electron-builder.yml
 .idea
-test
+res/cash/archive/**/*
+res/data/archive/**/*
+res/stat/stat.json
