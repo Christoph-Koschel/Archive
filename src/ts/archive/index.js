@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Program = void 0;
 var zip_1 = require("../zip/zip");
 var ui_1 = require("./ui");
 var electron_1 = require("electron");
@@ -69,12 +68,16 @@ var Program;
                     }
                 };
             });
+            electron_1.ipcMain.on("changePath", function (event, args) {
+                _this.changePath(args);
+            });
         }
         ArchiveBridge.prototype.scanDir = function () {
             var path = this.path;
             path = __root + "\\res\\cash\\archive" + path;
             var entries = fs_1.readdirSync(path);
             var scan = [];
+            console.log(entries);
             for (var x in entries) {
                 var entry = entries[x];
                 var stat = fs_1.statSync(path + entry);
@@ -95,9 +98,21 @@ var Program;
             }
             return scan;
         };
+        ArchiveBridge.prototype.changePath = function (target) {
+            try {
+                var path = path_1.join(__root, "\\res\\cash\\archive", this.path, target);
+                if (fs_1.existsSync(path) && fs_1.statSync(path).isDirectory()) {
+                    console.log(this.path);
+                    this.path = path_1.join(this.path, target);
+                    console.log(this.path);
+                }
+            }
+            catch (err) {
+                console.log(err);
+            }
+        };
         return ArchiveBridge;
     }());
-    Program.ArchiveBridge = ArchiveBridge;
-})(Program = exports.Program || (exports.Program = {}));
+})(Program || (Program = {}));
 Program.Archive.main();
 //# sourceMappingURL=index.js.map

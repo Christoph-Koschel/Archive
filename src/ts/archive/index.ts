@@ -3,7 +3,7 @@ import {Ui} from "./ui";
 import {app, ipcMain} from "electron";
 import {join} from "path";
 import {Interfaces} from "./interfaces";
-import {readdirSync, Stats, statSync, unlinkSync} from "fs";
+import {existsSync, readdirSync, Stats, statSync, unlinkSync} from "fs";
 import {Storage} from "./storage";
 
 let mime = require("mime");
@@ -70,6 +70,10 @@ namespace Program {
                     }
                 };
             });
+
+            ipcMain.on("changePath", (event, args) => {
+                this.changePath(args);
+            });
         }
 
         private scanDir(): object[] {
@@ -77,8 +81,8 @@ namespace Program {
             path = __root + "\\res\\cash\\archive" + path;
             let entries: object = readdirSync(path);
             let scan: object[] = [];
-
-            for(const x in entries) {
+            console.log(entries);
+            for (const x in entries) {
                 let entry = entries[x];
                 let stat: Stats = statSync(path + entry);
                 if (stat.isDirectory()) {
@@ -97,6 +101,19 @@ namespace Program {
             }
 
             return scan;
+        }
+
+        private changePath(target): void {
+            try {
+                let path = join(__root, "\\res\\cash\\archive", this.path, target);
+                if (existsSync(path) && statSync(path).isDirectory()) {
+                    console.log(this.path);
+                    this.path = join(this.path, target);
+                    console.log(this.path);
+                }
+            } catch (err) {
+                console.log(err);
+            }
         }
     }
 }
