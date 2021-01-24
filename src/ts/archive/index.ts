@@ -1,10 +1,10 @@
 import {ZipLib} from "../zip/zip";
 import {Ui} from "./ui";
-import {app, ipcMain} from "electron";
-import {join} from "path";
 import {Interfaces} from "./interfaces";
-import {existsSync, readdirSync, Stats, statSync, unlinkSync} from "fs";
 import {Storage} from "./storage";
+import {app, BrowserWindow, dialog, ipcMain} from "electron";
+import {join} from "path";
+import {existsSync, mkdirSync, readdirSync, Stats, statSync, unlinkSync} from "fs";
 
 let mime = require("mime");
 const __root: string = join(__dirname, "..", "..", "..");
@@ -16,6 +16,9 @@ namespace Program {
     import Stat = Storage.Stat;
 
     export class Archive {
+        public static ui: UiEngine;
+
+
         public static main(): void {
             let stat: Stat = new Stat();
             let zipArchive: Zip = Zip.open(__root + "\\res\\data\\archive\\archive.zip");
@@ -37,8 +40,9 @@ namespace Program {
                     stat.setStat(archiveStat);
                 }
             }
+
             app.on("ready", () => {
-                let ui: UiEngine = new UiEngine({
+                this.ui = new UiEngine({
                     electron: {
                         icon: __root + "\\res\\icon\\icon.ico",
                         webPreferences: {
@@ -51,9 +55,15 @@ namespace Program {
                     }
                 });
                 let archiveBridge = new ArchiveBridge();
-                ui.window.loadFile(__root + "\\index.html");
+                this.ui.window.loadFile(__root + "\\index.html");
             });
+
         }
+
+        public static getWindow(): BrowserWindow {
+            return this.ui.window;
+        }
+
     }
 
     class ArchiveBridge {
@@ -64,9 +74,23 @@ namespace Program {
 
             ipcMain.handle("scanDir", async () => {
                 return {
-                        entries: this.scanDir(),
-                        path: this.path
-                    }
+                    entries: this.scanDir(),
+                    path: this.path
+                }
+            });
+
+            ipcMain.handle("createFolder", async (event, args) => {
+                if (!this.createFolder(args)) {
+                    dialog.showMessageBoxSync(Archive.getWindow(), {
+                        message: "A folder with this name already exists!",
+                        buttons: ["Ok"],
+                        type: "error",
+                        title: "Error"
+                    });
+                    return false;
+                } else {
+                    return true;
+                }
             });
 
             ipcMain.on("changePath", (event, args) => {
@@ -109,6 +133,16 @@ namespace Program {
                 }
             } catch (err) {
                 console.log(err);
+            }
+        }
+
+        private createFolder(target): boolean {
+            let path = join(__root, "\\res\\cash\\archive", this.path, target);
+            if (existsSync(path) && statSync(path).isDirectory()) {
+                return false;
+            } else {
+                mkdirSync(path);
+                return true;
             }
         }
     }

@@ -32,7 +32,8 @@ export namespace Ui {
                 let btnId: number = dialog.showMessageBoxSync(this.window,{
                     type: "question",
                     buttons: ["Yes", "No"],
-                    message: "Do you want to yust minify the program or to quit it complete?"
+                    message: "Do you want to yust minify the program or to quit it complete?",
+                    title: "Close mode"
                 });
 
                 if (btnId === 0 || btnId === 1) {

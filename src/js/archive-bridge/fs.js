@@ -7,3 +7,7 @@ export function scanDir(callback) {
 export function changePath(target) {
     ipcRenderer.send("changePath", target);
 }
+
+export function createFolder(name, callback) {
+    ipcRenderer.invoke("createFolder", name).then(callback);
+}

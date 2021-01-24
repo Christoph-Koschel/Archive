@@ -1,4 +1,5 @@
-import {changePath, scanDir} from "./fs.js";
+import {changePath, createFolder, scanDir} from "./fs.js";
+import {clearView} from "../ui/view manager.js";
 
 function loadFileEntries() {
     scanDir((scan) => {
@@ -90,7 +91,6 @@ function loadFileEntries() {
                 tr.appendChild(td3);
                 tr.appendChild(td4);
                 entriesTable.appendChild(tr);
-
             }
         }
 
@@ -105,4 +105,18 @@ function loadPath(path) {
 window.addEventListener("load", () => {
     loadFileEntries();
 
+    document.getElementById("createFolder").addEventListener("submit", (e) => {
+        e.preventDefault();
+        let name = document.forms["createFolder"]["name"].value;
+        createFolder(name,(values) => {
+            if (values) {
+                clearView({
+                    mainView: true
+                });
+                loadFileEntries();
+            }
+        });
+
+        document.forms["createFolder"].reset();
+    });
 });

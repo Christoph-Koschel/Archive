@@ -27,7 +27,8 @@ var Ui;
                 var btnId = electron_1.dialog.showMessageBoxSync(_this.window, {
                     type: "question",
                     buttons: ["Yes", "No"],
-                    message: "Do you want to yust minify the program or to quit it complete?"
+                    message: "Do you want to yust minify the program or to quit it complete?",
+                    title: "Close mode"
                 });
                 if (btnId === 0 || btnId === 1) {
                     var stat = new Stat();

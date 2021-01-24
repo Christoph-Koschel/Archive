@@ -38,10 +38,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var zip_1 = require("../zip/zip");
 var ui_1 = require("./ui");
+var storage_1 = require("./storage");
 var electron_1 = require("electron");
 var path_1 = require("path");
 var fs_1 = require("fs");
-var storage_1 = require("./storage");
 var mime = require("mime");
 var __root = path_1.join(__dirname, "..", "..", "..");
 var Program;
@@ -53,6 +53,7 @@ var Program;
         function Archive() {
         }
         Archive.main = function () {
+            var _this = this;
             var stat = new Stat();
             var zipArchive = Zip.open(__root + "\\res\\data\\archive\\archive.zip");
             var archiveStat = stat.getStat();
@@ -73,7 +74,7 @@ var Program;
                 }
             }
             electron_1.app.on("ready", function () {
-                var ui = new UiEngine({
+                _this.ui = new UiEngine({
                     electron: {
                         icon: __root + "\\res\\icon\\icon.ico",
                         webPreferences: {
@@ -86,8 +87,11 @@ var Program;
                     }
                 });
                 var archiveBridge = new ArchiveBridge();
-                ui.window.loadFile(__root + "\\index.html");
+                _this.ui.window.loadFile(__root + "\\index.html");
             });
+        };
+        Archive.getWindow = function () {
+            return this.ui.window;
         };
         return Archive;
     }());
@@ -104,6 +108,24 @@ var Program;
                         }];
                 });
             }); });
+            electron_1.ipcMain.handle("createFolder", function (event, args) { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    if (!this.createFolder(args)) {
+                        electron_1.dialog.showMessageBoxSync(Archive.getWindow(), {
+                            message: "A folder with this name already exists!",
+                            buttons: ["Ok"],
+                            type: "error",
+                            title: "Error",
+                            icon: __root + "\\res\\icon\\icon.ico"
+                        });
+                        return [2 /*return*/, false];
+                    }
+                    else {
+                        return [2 /*return*/, true];
+                    }
+                    return [2 /*return*/];
+                });
+            }); });
             electron_1.ipcMain.on("changePath", function (event, args) {
                 _this.changePath(args);
             });
@@ -111,11 +133,8 @@ var Program;
         ArchiveBridge.prototype.scanDir = function () {
             var path = this.path;
             path = __root + "\\res\\cash\\archive" + path;
-            console.log(1);
             var entries = fs_1.readdirSync(path);
-            console.log(2);
             var scan = [];
-            console.log(entries);
             // @ts-ignore
             for (var i = 0; i < entries.length; i++) {
                 var entry = entries[i];
@@ -141,13 +160,21 @@ var Program;
             try {
                 var path = path_1.join(__root, "\\res\\cash\\archive", this.path, target);
                 if (fs_1.existsSync(path) && fs_1.statSync(path).isDirectory()) {
-                    console.log(this.path);
                     this.path = path_1.join(this.path, target);
-                    console.log(this.path);
                 }
             }
             catch (err) {
                 console.log(err);
+            }
+        };
+        ArchiveBridge.prototype.createFolder = function (target) {
+            var path = path_1.join(__root, "\\res\\cash\\archive", this.path, target);
+            if (fs_1.existsSync(path) && fs_1.statSync(path).isDirectory()) {
+                return false;
+            }
+            else {
+                fs_1.mkdirSync(path);
+                return true;
             }
         };
         return ArchiveBridge;

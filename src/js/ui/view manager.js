@@ -47,7 +47,7 @@ window.addEventListener("load", () => {
     });
 });
 
-function clearView({
+export function clearView({
                        mainView = false,
                        fileView = false,
                        folderView = false,
