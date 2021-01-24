@@ -1,9 +1,9 @@
 const {ipcRenderer} = require("electron");
 
-export function scanDir() {
-    return ipcRenderer.sendSync("scanDir")["returnValue"];
+export function scanDir(callback) {
+    ipcRenderer.invoke("scanDir").then(callback);
 }
 
 export function changePath(target) {
-    ipcRenderer.sendSync("changePath", target);
+    ipcRenderer.send("changePath", target);
 }

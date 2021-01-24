@@ -62,13 +62,11 @@ namespace Program {
         constructor() {
             this.path = "\\";
 
-            ipcMain.on("scanDir", (event) => {
-                event.returnValue = {
-                    returnValue: {
+            ipcMain.handle("scanDir", async () => {
+                return {
                         entries: this.scanDir(),
                         path: this.path
                     }
-                };
             });
 
             ipcMain.on("changePath", (event, args) => {
@@ -81,10 +79,10 @@ namespace Program {
             path = __root + "\\res\\cash\\archive" + path;
             let entries: object = readdirSync(path);
             let scan: object[] = [];
-            console.log(entries);
-            for (const x in entries) {
-                let entry = entries[x];
-                let stat: Stats = statSync(path + entry);
+            // @ts-ignore
+            for (let i = 0; i < entries.length; i++) {
+                let entry = entries[i];
+                let stat: Stats = statSync(path + "\\" + entry);
                 if (stat.isDirectory()) {
                     scan.push({
                         type: "dir",
@@ -107,9 +105,7 @@ namespace Program {
             try {
                 let path = join(__root, "\\res\\cash\\archive", this.path, target);
                 if (existsSync(path) && statSync(path).isDirectory()) {
-                    console.log(this.path);
                     this.path = join(this.path, target);
-                    console.log(this.path);
                 }
             } catch (err) {
                 console.log(err);
