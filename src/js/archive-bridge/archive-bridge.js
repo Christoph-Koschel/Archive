@@ -1,4 +1,4 @@
-import {changePath, createFolder, scanDir} from "./fs.js";
+import {changePath, createFolder, deleteFolder, scanDir} from "./fs.js";
 import {clearView} from "../ui/view manager.js";
 
 function loadFileEntries() {
@@ -54,7 +54,13 @@ function loadFileEntries() {
                 let btn1 = document.createElement("button");
                 btn1.classList.add("btn", "btn-primary", "btn-sm");
                 btn1.type = "button";
+                btn1.setAttribute("entry", entry.name);
                 btn1.innerHTML = "Delete &nbsp;<i class=\"far fa-trash-alt\"></i>&nbsp;";
+                btn1.addEventListener("click", function () {
+                    deleteFolder(this.getAttribute("entry"),() => {
+                        loadFileEntries();
+                    });
+                });
 
                 td1.appendChild(a);
                 td4.appendChild(btn1);
@@ -108,7 +114,7 @@ window.addEventListener("load", () => {
     document.getElementById("createFolder").addEventListener("submit", (e) => {
         e.preventDefault();
         let name = document.forms["createFolder"]["name"].value;
-        createFolder(name,(values) => {
+        createFolder(name, (values) => {
             if (values) {
                 clearView({
                     mainView: true

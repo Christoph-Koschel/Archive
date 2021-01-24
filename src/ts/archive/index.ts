@@ -5,6 +5,7 @@ import {Storage} from "./storage";
 import {app, BrowserWindow, dialog, ipcMain} from "electron";
 import {join} from "path";
 import {existsSync, mkdirSync, readdirSync, Stats, statSync, unlinkSync} from "fs";
+import {ExtendedFs} from "../extendedFs/extendedFs";
 
 let mime = require("mime");
 const __root: string = join(__dirname, "..", "..", "..");
@@ -14,6 +15,7 @@ namespace Program {
     import Zip = ZipLib.Zip;
     import UiEngine = Ui.UiEngine;
     import Stat = Storage.Stat;
+    import deleteRecursive = ExtendedFs.deleteRecursive;
 
     export class Archive {
         public static ui: UiEngine;
@@ -79,7 +81,7 @@ namespace Program {
                 }
             });
 
-            ipcMain.handle("createFolder", async (event, args) => {
+            ipcMain.handle("createFolder", async (event, args: any) => {
                 if (!this.createFolder(args)) {
                     dialog.showMessageBoxSync(Archive.getWindow(), {
                         message: "A folder with this name already exists!",
@@ -93,8 +95,20 @@ namespace Program {
                 }
             });
 
-            ipcMain.on("changePath", (event, args) => {
+            ipcMain.on("changePath", (event, args: any) => {
                 this.changePath(args);
+            });
+
+            ipcMain.handle("deleteFolder",async (event, args) => {
+                let pushId = dialog.showMessageBoxSync(Archive.getWindow(), {
+                    message: "Do you want really delete this folder?",
+                    buttons: ["Yes","No"],
+                    type: "question",
+                    title: "Permission"
+                });
+                if (pushId === 0) {
+                    this.deleteFolder(args);
+                }
             });
         }
 
@@ -125,7 +139,7 @@ namespace Program {
             return scan;
         }
 
-        private changePath(target): void {
+        private changePath(target: any): void {
             try {
                 let path = join(__root, "\\res\\cash\\archive", this.path, target);
                 if (existsSync(path) && statSync(path).isDirectory()) {
@@ -136,13 +150,20 @@ namespace Program {
             }
         }
 
-        private createFolder(target): boolean {
+        private createFolder(target: any): boolean {
             let path = join(__root, "\\res\\cash\\archive", this.path, target);
             if (existsSync(path) && statSync(path).isDirectory()) {
                 return false;
             } else {
                 mkdirSync(path);
                 return true;
+            }
+        }
+
+        private deleteFolder(target: any): void {
+            let path = join(__root + "\\res\\cash\\archive", this.path, target);
+            if (existsSync(path) && statSync(path).isDirectory()) {
+                deleteRecursive(path);
             }
         }
     }

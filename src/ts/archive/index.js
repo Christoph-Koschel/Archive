@@ -42,6 +42,7 @@ var storage_1 = require("./storage");
 var electron_1 = require("electron");
 var path_1 = require("path");
 var fs_1 = require("fs");
+var extendedFs_1 = require("../extendedFs/extendedFs");
 var mime = require("mime");
 var __root = path_1.join(__dirname, "..", "..", "..");
 var Program;
@@ -49,6 +50,7 @@ var Program;
     var Zip = zip_1.ZipLib.Zip;
     var UiEngine = ui_1.Ui.UiEngine;
     var Stat = storage_1.Storage.Stat;
+    var deleteRecursive = extendedFs_1.ExtendedFs.deleteRecursive;
     var Archive = /** @class */ (function () {
         function Archive() {
         }
@@ -115,8 +117,7 @@ var Program;
                             message: "A folder with this name already exists!",
                             buttons: ["Ok"],
                             type: "error",
-                            title: "Error",
-                            icon: __root + "\\res\\icon\\icon.ico"
+                            title: "Error"
                         });
                         return [2 /*return*/, false];
                     }
@@ -129,6 +130,21 @@ var Program;
             electron_1.ipcMain.on("changePath", function (event, args) {
                 _this.changePath(args);
             });
+            electron_1.ipcMain.handle("deleteFolder", function (event, args) { return __awaiter(_this, void 0, void 0, function () {
+                var pushId;
+                return __generator(this, function (_a) {
+                    pushId = electron_1.dialog.showMessageBoxSync(Archive.getWindow(), {
+                        message: "Do you want really delete this folder?",
+                        buttons: ["Yes", "No"],
+                        type: "question",
+                        title: "Permission"
+                    });
+                    if (pushId === 0) {
+                        this.deleteFolder(args);
+                    }
+                    return [2 /*return*/];
+                });
+            }); });
         }
         ArchiveBridge.prototype.scanDir = function () {
             var path = this.path;
@@ -175,6 +191,12 @@ var Program;
             else {
                 fs_1.mkdirSync(path);
                 return true;
+            }
+        };
+        ArchiveBridge.prototype.deleteFolder = function (target) {
+            var path = path_1.join(__root + "\\res\\cash\\archive", this.path, target);
+            if (fs_1.existsSync(path) && fs_1.statSync(path).isDirectory()) {
+                deleteRecursive(path);
             }
         };
         return ArchiveBridge;

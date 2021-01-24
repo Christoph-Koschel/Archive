@@ -53,7 +53,6 @@ export namespace Ui {
                         }
                     }
                 }
-
                 app.quit();
             });
         }

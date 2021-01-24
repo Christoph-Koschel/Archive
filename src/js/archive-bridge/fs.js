@@ -11,3 +11,7 @@ export function changePath(target) {
 export function createFolder(name, callback) {
     ipcRenderer.invoke("createFolder", name).then(callback);
 }
+
+export function deleteFolder(name, callback) {
+    ipcRenderer.invoke("deleteFolder", name).then(callback);
+}
