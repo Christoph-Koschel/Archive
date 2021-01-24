@@ -1,8 +1,17 @@
 import {app, BrowserWindow, dialog} from "electron";
+import {ExtendedFs} from "../extendedFs/extendedFs";
+import {join} from "path";
 import {Interfaces} from "./interfaces";
+import {Storage} from "./storage";
+import {ZipLib} from "../zip/zip";
+
+const __root: string = join(__dirname, "..", "..", "..");
 
 export namespace Ui {
     import IUiEngineConstructor = Interfaces.IUiEngineConstructor;
+    import Stat = Storage.Stat;
+    import IStat = Interfaces.IStat;
+    import Zip = ZipLib.Zip;
 
     export class UiEngine {
         public readonly window: BrowserWindow;
@@ -27,8 +36,24 @@ export namespace Ui {
                 });
 
                 if (btnId === 0 || btnId === 1) {
-                    app.quit();
+                    let stat: Stat = new Stat();
+                    let statFile: IStat | boolean = stat.getStat();
+                    if (typeof statFile === "object") {
+                        if (statFile.archive.status === "decoded") {
+                            let zipArchive: Zip = Zip.open(__root + "\\res\\data\\archive\\archive.zip");
+                            try {
+                                zipArchive.Pack(__root + "\\res\\cash\\archive");
+                            } catch (err) {
+                                console.log(err);
+                            }
+                            statFile.archive.status = "encoded";
+                            stat.setStat(statFile);
+                            ExtendedFs.deleteRecursive(__root + "\\res\\cash\\archive");
+                        }
+                    }
                 }
+
+                app.quit();
             });
         }
     }

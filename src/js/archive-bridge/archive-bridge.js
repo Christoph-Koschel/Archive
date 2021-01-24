@@ -8,9 +8,15 @@ function loadFileEntries() {
         let entry = entries[x];
         console.log(entry);
     }
+
+    loadPath(path);
 }
 
-window.addEventListener("load",() => {
+function loadPath(path) {
+    document.getElementById("currentPath").innerHTML = "Archive:" + path;
+}
+
+window.addEventListener("load", () => {
     loadFileEntries();
 
 });

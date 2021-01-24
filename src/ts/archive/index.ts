@@ -3,8 +3,8 @@ import {Ui} from "./ui";
 import {app, ipcMain} from "electron";
 import {join} from "path";
 import {Interfaces} from "./interfaces";
-import {ExtendedFs} from "../extendedFs/extendedFs";
-import {readdirSync, readFileSync, Stats, statSync, unlinkSync, writeFileSync} from "fs";
+import {readdirSync, Stats, statSync, unlinkSync} from "fs";
+import {Storage} from "./storage";
 
 let mime = require("mime");
 const __root: string = join(__dirname, "..", "..", "..");
@@ -13,6 +13,7 @@ namespace Program {
     import IStat = Interfaces.IStat;
     import Zip = ZipLib.Zip;
     import UiEngine = Ui.UiEngine;
+    import Stat = Storage.Stat;
 
     export class Archive {
         public static main(): void {
@@ -52,27 +53,6 @@ namespace Program {
                 let archiveBridge = new ArchiveBridge();
                 ui.window.loadFile(__root + "\\index.html");
             });
-        }
-    }
-
-    class Stat {
-        public getStat(): IStat | boolean {
-            let json: string | object = readFileSync(__root + "/res/stat/stat.json", "utf8");
-            try {
-                json = JSON.parse(json);
-                if (typeof json === "object") {
-                    // @ts-ignore
-                    return json;
-                } else {
-                    return false;
-                }
-            } catch (err) {
-                return false;
-            }
-        }
-
-        public setStat(obj: IStat): void {
-            writeFileSync(__root + "/res/stat/stat.json", JSON.stringify(obj, null, 4))
         }
     }
 
@@ -119,27 +99,6 @@ namespace Program {
             return scan;
         }
     }
-
-
-    app.on("ready", () => {
-        app.on("before-quit", () => {
-            let stat: Stat = new Stat();
-            let statFile: IStat | boolean = stat.getStat();
-            if (typeof statFile === "object") {
-                if (statFile.archive.status === "decoded") {
-                    let zipArchive: Zip = Zip.open(__root + "\\res\\data\\archive\\archive.zip");
-                    try {
-                        zipArchive.Pack(__root + "\\res\\cash\\archive");
-                    } catch (err) {
-                        console.log(err);
-                    }
-                    statFile.archive.status = "encoded";
-                    stat.setStat(statFile);
-                    ExtendedFs.deleteRecursive(__root + "\\res\\cash\\archive");
-                }
-            }
-        });
-    });
 }
 
 Program.Archive.main();
